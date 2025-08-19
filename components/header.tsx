@@ -95,8 +95,8 @@ export default function Header() {
 
   return (
     <>
-      {/* Premium Minimalist Top Bar */}
-      <div className="fixed top-0 left-0 right-0 z-50 w-full bg-transparent px-6 py-4">
+      {/* Premium Minimalist Top Bar - Non-sticky */}
+      <div className="absolute top-0 left-0 right-0 z-50 w-full bg-transparent px-6 py-4">
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           {/* Left side - Phone numbers */}
           <div className="flex items-center space-x-8">
