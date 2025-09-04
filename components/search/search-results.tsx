@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { 
@@ -1045,33 +1045,7 @@ export default function SearchResults() {
 
   // Main search results view with hero
   return (
-    <Suspense fallback={
-      <section className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 py-32">
-        <div className="max-w-7xl mx-auto px-8">
-          <div className="text-center mb-16">
-            <div className="space-y-4 animate-pulse">
-              <div className="h-12 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-xl w-96 mx-auto"></div>
-              <div className="h-6 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-64 mx-auto"></div>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-white/80 backdrop-blur-sm rounded-2xl overflow-hidden animate-pulse border border-neutral-200/60">
-                <div className="h-48 bg-gradient-to-r from-neutral-200 to-neutral-300"></div>
-                <div className="p-6 space-y-4">
-                  <div className="h-6 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-3/4"></div>
-                  <div className="h-4 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-1/2"></div>
-                  <div className="space-y-2">
-                    <div className="h-4 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg"></div>
-                    <div className="h-4 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-5/6"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-    }>
+    <>
       <SearchHero />
       
       <section className="bg-gradient-to-br from-neutral-50 via-white to-neutral-100 py-16">
@@ -1439,6 +1413,6 @@ export default function SearchResults() {
           )}
         </div>
       </section>
-    </Suspense>
+    </>
   );
 }
