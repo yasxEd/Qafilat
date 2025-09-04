@@ -7,60 +7,55 @@ import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
 import Link from "next/link"
+import { useOffersData } from "@/lib/useOffersData"
 
 interface OfferDetailsProps {
   id: string
-  }
-
+}
 
 export default function OfferDetails({ id }: OfferDetailsProps) {
+  const { offres: allOffers, isLoaded } = useOffersData()
   const [offers, setOffers] = useState<any[]>([])
   const [selectedOffer, setSelectedOffer] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setLoading(true)
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("offres")
-      if (saved) {
-        const allOffers = JSON.parse(saved)
-        let filtered: any[] = []
-        const omraVariants = ["omra", "umrah", "omrah"]
-        if (id === "hotel") {
-            filtered = allOffers.filter((o: any) => o.hotels && o.hotels.length > 0)
-        } else if (id === "flight") {
-            filtered = allOffers.filter((o: any) => o.compagniesAeriennes)
-        } else if (omraVariants.includes(id.toLowerCase())) {
-          filtered = allOffers.filter(
-            (o: any) => {
-              const titre = o.titre?.toLowerCase() || ""
-              const destination = o.destination?.toLowerCase() || ""
-              return omraVariants.some(v =>
-                titre.includes(v) || destination.includes(v)
-              )
-            }
-          )
-        } else if (id === "hajj") {
-          filtered = allOffers.filter(
-            (o: any) =>
-              o.titre?.toLowerCase().includes("hajj") ||
-              o.destination?.toLowerCase().includes("hajj")
-          )
-        } else {
-          filtered = allOffers.filter(
-            (o: any) =>
-              o.id === id ||
-              o.titre?.toLowerCase().includes(id.toLowerCase()) ||
-              o.destination?.toLowerCase().includes(id.toLowerCase())
-          )
-        }
-        setOffers(filtered)
+    if (isLoaded && allOffers.length > 0) {
+      let filtered: any[] = []
+      const omraVariants = ["omra", "umrah", "omrah"]
+      
+      if (id === "hotel") {
+        filtered = allOffers.filter((o: any) => o.hotels && o.hotels.length > 0)
+      } else if (id === "flight") {
+        filtered = allOffers.filter((o: any) => o.compagniesAeriennes)
+      } else if (omraVariants.includes(id.toLowerCase())) {
+        filtered = allOffers.filter(
+          (o: any) => {
+            const titre = o.titre?.toLowerCase() || ""
+            const destination = o.destination?.toLowerCase() || ""
+            return omraVariants.some(v =>
+              titre.includes(v) || destination.includes(v)
+            )
+          }
+        )
+      } else if (id === "hajj") {
+        filtered = allOffers.filter(
+          (o: any) =>
+            o.titre?.toLowerCase().includes("hajj") ||
+            o.destination?.toLowerCase().includes("hajj")
+        )
+      } else {
+        filtered = allOffers.filter(
+          (o: any) =>
+            o.id === id ||
+            o.titre?.toLowerCase().includes(id.toLowerCase()) ||
+            o.destination?.toLowerCase().includes(id.toLowerCase())
+        )
       }
-      setLoading(false)
+      setOffers(filtered)
     }
-  }, [id])
+  }, [id, allOffers, isLoaded])
 
-  if (loading) {
+  if (!isLoaded) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex justify-center items-center">
         <div className="space-y-8 animate-pulse max-w-md w-full">

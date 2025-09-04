@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { ArrowRight, Users } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
+import { useOffersData } from "@/lib/useOffersData"
 
 // Import form components
 import HajjForm from "@/components/forms/hajj-form"
@@ -519,20 +520,17 @@ export default function AvailabilityContainer() {
   const [hotelResults, setHotelResults] = useState<any[]>([])
   const [volResults, setVolResults] = useState<any[]>([])
 
-  // Get offers from localStorage
+  // Use centralized data management
+  const { offres: allOffers, isLoaded } = useOffersData()
+
+  // Get offers from centralized data instead of localStorage
   const getLocalOffers = () => {
-    if (typeof window !== "undefined") {
-      try {
-        const data = localStorage.getItem("offres")
-        if (data) return JSON.parse(data)
-      } catch {}
-    }
-    return []
+    return isLoaded ? allOffers : []
   }
 
   // Search hotels when hotel tab and destination selected
   useEffect(() => {
-    if (activeTab === "hotel" && hotelDestination) {
+    if (activeTab === "hotel" && hotelDestination && isLoaded) {
       const offers = getLocalOffers()
       const results = offers
         .filter((o: any) => o.category === "omra" || o.category === "hajj")
@@ -553,11 +551,11 @@ export default function AvailabilityContainer() {
     } else {
       setHotelResults([])
     }
-  }, [activeTab, hotelDestination, hotelDestinationInput])
+  }, [activeTab, hotelDestination, hotelDestinationInput, isLoaded, allOffers])
 
   // Search vols when vol tab and cities selected
   useEffect(() => {
-    if (activeTab === "vol" && departureCity && arrivalCity) {
+    if (activeTab === "vol" && departureCity && arrivalCity && isLoaded) {
       const offers = getLocalOffers()
       const results = offers
         .filter((o: any) =>
@@ -577,7 +575,7 @@ export default function AvailabilityContainer() {
     } else {
       setVolResults([])
     }
-  }, [activeTab, departureCity, arrivalCity, departureCityInput, arrivalCityInput])
+  }, [activeTab, departureCity, arrivalCity, departureCityInput, arrivalCityInput, isLoaded, allOffers])
 
   return (
     <div className="min-h-screen bg-neutral-50 flex flex-col">

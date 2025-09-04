@@ -4,65 +4,24 @@ import { useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, MapPin, Calendar, Users, Star, Plane, Hotel } from "lucide-react"
-
-// Types for offers
-interface TarifsChambre {
-  quintuple: string;
-  quadruple: string;
-  triple: string;
-  double: string;
-}
-
-interface Hotel {
-  id: string;
-  nom: string;
-  distance?: string;
-  tarifsChambre: TarifsChambre;
-}
-
-interface DateDisponible {
-  id: string;
-  dateDebut: string;
-  dateFin: string;
-  periode: string;
-}
-
-interface Offre {
-  id: string;
-  titre: string;
-  periode: string;
-  datesDisponibles: DateDisponible[];
-  prixBase: string;
-  compagniesAeriennes: string;
-  hebergement: string;
-  hotels: Hotel[];
-  tarifsChambre: TarifsChambre;
-  servicesInclus: string[];
-  image: string;
-  destination: string;
-  duree: string;
-  note: number;
-  nombrePersonnes: string;
-  dateCreation: string;
-  statut: 'active' | 'inactive' | 'brouillon';
-  category: 'omra' | 'hajj';
-}
+import { useOffersData, type Offre } from "@/lib/useOffersData"
 
 export default function HeroSection() {
 	const parallaxRef = useRef<HTMLDivElement>(null)
 	const [currentOfferIndex, setCurrentOfferIndex] = useState(0)
 	const [isVisible, setIsVisible] = useState(false)
+	
+	// Use centralized data management
+	const { offres: allOffers, isLoaded } = useOffersData()
 	const [offers, setOffers] = useState<Offre[]>([])
 
-	// Load offers from localStorage
+	// Filter only active offers
 	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			const savedOffres = JSON.parse(localStorage.getItem('offres') || '[]');
-			// Filter only active offers
-			const activeOffers = savedOffres.filter((offer: Offre) => offer.statut === 'active');
+		if (isLoaded && allOffers.length > 0) {
+			const activeOffers = allOffers.filter((offer: Offre) => offer.statut === 'active');
 			setOffers(activeOffers);
 		}
-	}, []);
+	}, [allOffers, isLoaded]);
 
 	// Handle offer rotation
 	useEffect(() => {

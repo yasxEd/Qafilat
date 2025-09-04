@@ -1,26 +1,13 @@
 "use client"
-import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Calendar, MapPin, Plane, Star } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
+import { useOffersData } from "@/lib/useOffersData"
 
 export default function OffersList() {
-  const [offers, setOffers] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    setLoading(true)
-    // Load offers from localStorage
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("offres")
-      if (saved) {
-        setOffers(JSON.parse(saved))
-      }
-      setLoading(false)
-    }
-  }, [])
+  const { offres: offers, isLoaded: loading } = useOffersData()
 
   const container = {
     hidden: { opacity: 0 },
@@ -37,7 +24,7 @@ export default function OffersList() {
     show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
   }
 
-  if (loading) {
+  if (!loading) {
     return (
       <section className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 py-32">
         <div className="max-w-8xl mx-auto px-8">

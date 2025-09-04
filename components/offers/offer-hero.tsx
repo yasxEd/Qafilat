@@ -3,27 +3,33 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Calendar, MapPin, Plane } from "lucide-react"
+import { useOffersData } from "@/lib/useOffersData"
 
 interface OfferHeroProps {
   id: string
 }
 
 export default function OfferHero({ id }: OfferHeroProps) {
+  const { offres: allOffers, isLoaded } = useOffersData()
   const [offerData, setOfferData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate fetching data
-    setLoading(true)
+    if (isLoaded) {
+      setLoading(true)
 
-    // This would normally be an API call
-    setTimeout(() => {
+      // Get offers count for each category
+      const hajjCount = allOffers.filter(o => o.category === 'hajj' || o.titre?.toLowerCase().includes('hajj')).length
+      const omraCount = allOffers.filter(o => o.category === 'omra' || o.titre?.toLowerCase().includes('omra')).length
+      const hotelCount = allOffers.reduce((acc, o) => acc + (o.hotels?.length || 0), 0)
+      const flightCount = allOffers.filter(o => o.compagniesAeriennes).length
+
       let data
 
       if (id === "hajj") {
         data = {
           title: "Offres Hajj Premium",
-          subtitle: "Saison 1446H (2025)",
+          subtitle: `${hajjCount} programmes disponibles`,
           description: "Accomplissez le cinquième pilier de l'Islam avec sérénité et dans les meilleures conditions d'excellence",
           image: "/f6.avif",
           icon: <Calendar className="h-16 w-16 text-amber-400" />,
@@ -31,7 +37,7 @@ export default function OfferHero({ id }: OfferHeroProps) {
       } else if (id === "omra") {
         data = {
           title: "Offres Omra Exclusive",
-          subtitle: "Programmes 2024-2025",
+          subtitle: `${omraCount} programmes disponibles`,
           description: "Des programmes premium adaptés à tous les budgets pour accomplir votre Omra en toute sérénité",
           image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=1920&auto=format&fit=crop",
           icon: <MapPin className="h-16 w-16 text-amber-400" />,
@@ -47,7 +53,7 @@ export default function OfferHero({ id }: OfferHeroProps) {
       } else if (id === "hotel") {
         data = {
           title: "Collection Hôtels",
-          subtitle: "Sélection premium d'hébergements",
+          subtitle: `${hotelCount} établissements d'exception`,
           description: "Découvrez notre sélection d'hôtels d'exception dans nos offres Omra et Hajj, avec leurs tarifs et emplacements privilégiés.",
           image: "/offers/hotels-bg.jpg",
           icon: <Calendar className="h-16 w-16 text-amber-400" />,
@@ -55,7 +61,7 @@ export default function OfferHero({ id }: OfferHeroProps) {
       } else if (id === "flight") {
         data = {
           title: "Services Aériens Premium",
-          subtitle: "Compagnies partenaires de prestige",
+          subtitle: `${flightCount} compagnies partenaires`,
           description: "Consultez toutes les informations sur nos vols premium inclus dans nos offres, avec nos compagnies partenaires sélectionnées.",
           image: "/offers/flights-bg.jpg",
           icon: <Plane className="h-16 w-16 text-amber-400" />,
@@ -70,10 +76,10 @@ export default function OfferHero({ id }: OfferHeroProps) {
 
       setOfferData(data)
       setLoading(false)
-    }, 500)
-  }, [id])
+    }
+  }, [id, allOffers, isLoaded])
 
-  if (loading) {
+  if (loading || !isLoaded) {
     return (
       <div className="w-full h-[80vh] bg-gradient-to-br from-neutral-100 to-neutral-200 animate-pulse flex items-center justify-center">
         <div className="text-neutral-400 text-xl font-light">Chargement de l'expérience...</div>
