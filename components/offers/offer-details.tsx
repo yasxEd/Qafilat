@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { Check, ChevronRight, Users } from "lucide-react"
+import { Check, ChevronRight, Users, Plane, Hotel as HotelIcon, MapPin, Calendar, ArrowLeft, Star, Heart, Bookmark, Shield, Clock, Phone, Mail } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
@@ -10,430 +10,973 @@ import Link from "next/link"
 
 interface OfferDetailsProps {
   id: string
-}
+  }
+
 
 export default function OfferDetails({ id }: OfferDetailsProps) {
-  const [offerData, setOfferData] = useState<any>(null)
+  const [offers, setOffers] = useState<any[]>([])
+  const [selectedOffer, setSelectedOffer] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate fetching data
     setLoading(true)
-
-    // This would normally be an API call
-    setTimeout(() => {
-      let data
-
-      if (id === "hajj") {
-        data = {
-          title: "Offres Hajj",
-          subtitle: "Saison 1446H (2025)",
-          description:
-            "L'agence Qafilat Tayba Voyages est fière d'annoncer l'ouverture des inscriptions pour la saison du Hajj 2025 (1446 H). Nos programmes ont été soigneusement élaborés pour vous offrir une expérience spirituelle inoubliable.",
-          features: [
-            "Vols directs ou avec une seule escale selon le forfait choisi",
-            "Hébergement dans des hôtels de qualité à proximité des lieux saints",
-            "Accompagnement par des guides expérimentés parlant français et arabe",
-            "Transport terrestre en bus climatisés entre les différents sites",
-            "Repas traditionnels préparés selon les normes d'hygiène internationales",
-            "Assistance médicale disponible 24h/24",
-            "Sessions préparatoires avant le départ pour vous familiariser avec les rituels",
-          ],
-          packages: [
-            {
-              name: "Forfait Standard",
-              price: "À partir de 75 000 MAD",
-              description:
-                "Notre forfait standard offre tous les services essentiels pour accomplir votre Hajj dans de bonnes conditions.",
-              features: ["Hôtels 3★ à Médine et La Mecque", "Tentes climatisées à Mina", "Repas inclus"],
-            },
-            {
-              name: "Forfait Premium",
-              price: "À partir de 95 000 MAD",
-              description: "Notre forfait premium vous garantit un confort optimal tout au long de votre pèlerinage.",
-              features: [
-                "Hôtels 4★ à Médine et La Mecque",
-                "Tentes VIP climatisées à Mina",
-                "Repas gastronomiques inclus",
-              ],
-            },
-            {
-              name: "Forfait VIP",
-              price: "À partir de 120 000 MAD",
-              description:
-                "Pour ceux qui recherchent l'excellence, notre forfait VIP offre des prestations haut de gamme.",
-              features: ["Hôtels 5★ à Médine et La Mecque", "Tentes luxueuses à Mina", "Service personnalisé"],
-            },
-          ],
-          faqs: [
-            {
-              question: "Quand commencent les inscriptions pour le Hajj 2025?",
-              answer:
-                "Les inscriptions sont ouvertes dès maintenant. Nous vous recommandons de vous inscrire le plus tôt possible car les places sont limitées.",
-            },
-            {
-              question: "Quels documents sont nécessaires pour l'inscription?",
-              answer:
-                "Vous aurez besoin d'un passeport valide au moins 6 mois après la date de retour, de photos d'identité récentes, d'un certificat de vaccination contre la méningite et d'un acompte pour réserver votre place.",
-            },
-            {
-              question: "Y a-t-il des facilités de paiement?",
-              answer: "Oui, nous proposons des plans de paiement échelonnés. Contactez-nous pour plus de détails.",
-            },
-          ],
-          testimonials: [
-            {
-              name: "Mohammed Alami",
-              year: "2023",
-              text: "Une organisation impeccable. Les guides étaient très professionnels et attentionnés. Je recommande vivement Qafilat Tayba pour le Hajj.",
-            },
-            {
-              name: "Fatima Benali",
-              year: "2023",
-              text: "Grâce à Qafilat Tayba, j'ai pu accomplir mon Hajj dans les meilleures conditions. Tout était parfaitement organisé.",
-            },
-          ],
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("offres")
+      if (saved) {
+        const allOffers = JSON.parse(saved)
+        let filtered: any[] = []
+        const omraVariants = ["omra", "umrah", "omrah"]
+        if (id === "hotel") {
+            filtered = allOffers.filter((o: any) => o.hotels && o.hotels.length > 0)
+        } else if (id === "flight") {
+            filtered = allOffers.filter((o: any) => o.compagniesAeriennes)
+        } else if (omraVariants.includes(id.toLowerCase())) {
+          filtered = allOffers.filter(
+            (o: any) => {
+              const titre = o.titre?.toLowerCase() || ""
+              const destination = o.destination?.toLowerCase() || ""
+              return omraVariants.some(v =>
+                titre.includes(v) || destination.includes(v)
+              )
+            }
+          )
+        } else if (id === "hajj") {
+          filtered = allOffers.filter(
+            (o: any) =>
+              o.titre?.toLowerCase().includes("hajj") ||
+              o.destination?.toLowerCase().includes("hajj")
+          )
+        } else {
+          filtered = allOffers.filter(
+            (o: any) =>
+              o.id === id ||
+              o.titre?.toLowerCase().includes(id.toLowerCase()) ||
+              o.destination?.toLowerCase().includes(id.toLowerCase())
+          )
         }
-      } else if (id === "omra") {
-        data = {
-          title: "Offres Omra",
-          subtitle: "Programmes 2024-2025",
-          description:
-            "Qafilat Tayba Voyages vous propose des programmes d'Omra tout au long de l'année, avec une attention particulière pour les périodes sacrées comme le Ramadan et Chaabane.",
-          features: [
-            "Billets d'avion aller-retour avec des compagnies aériennes réputées",
-            "Hébergement dans des hôtels soigneusement sélectionnés à proximité des lieux saints",
-            "Assistance pour l'obtention du visa Omra",
-            "Transport entre l'aéroport, Médine et La Mecque",
-            "Accompagnement spirituel par des guides expérimentés",
-            "Visites des sites historiques à Médine et La Mecque",
-          ],
-          packages: [
-            {
-              name: "Omra Chaabane 1446",
-              price: "À partir de 15 000 MAD",
-              description:
-                "Programme spécial pour Chaabane 1446 (février 2025), une période bénie pour accomplir l'Omra.",
-              features: ["Départ le 22 février 2025", "Séjour de 12 jours", "Hôtels 4★"],
-            },
-            {
-              name: "Omra Ramadan 1446",
-              price: "À partir de 25 000 MAD",
-              description: "Vivez l'expérience unique de l'Omra pendant le mois sacré de Ramadan 1446 (mars 2025).",
-              features: [
-                "Plusieurs dates de départ dès le 6 mars 2025",
-                "Séjour de 10 à 15 jours",
-                "Hôtels 3★ à 5★ selon votre choix",
-              ],
-            },
-            {
-              name: "Omra Janvier 2024",
-              price: "À partir de 12 000 MAD",
-              description:
-                "Programme spécial Miqat Dhul Akhdar, une période idéale pour accomplir l'Omra en toute sérénité.",
-              features: ["Du 18 au 30 janvier 2024", "Séjour de 12 jours", "Hôtels 3★"],
-            },
-          ],
-          faqs: [
-            {
-              question: "Quelle est la meilleure période pour faire l'Omra?",
-              answer:
-                "Chaque période a ses avantages. Le Ramadan est particulièrement béni, mais aussi plus fréquenté. Les mois comme Chaabane offrent une expérience plus sereine avec moins de foule.",
-            },
-            {
-              question: "Les repas sont-ils inclus dans les forfaits?",
-              answer:
-                "Cela dépend du forfait choisi. Certains incluent tous les repas, d'autres seulement le petit-déjeuner. Consultez les détails de chaque offre ou contactez-nous pour plus d'informations.",
-            },
-            {
-              question: "Comment se déroule la préparation avant le départ?",
-              answer:
-                "Nous organisons des sessions d'information pour tous nos pèlerins, où nous expliquons en détail les rituels de l'Omra et fournissons des conseils pratiques pour votre voyage.",
-            },
-          ],
-          testimonials: [
-            {
-              name: "Ahmed Tazi",
-              year: "Ramadan 2023",
-              text: "L'Omra pendant le Ramadan avec Qafilat Tayba a été une expérience spirituelle extraordinaire. L'organisation était parfaite malgré la foule.",
-            },
-            {
-              name: "Khadija Mansouri",
-              year: "Janvier 2023",
-              text: "J'ai apprécié la qualité des services et l'accompagnement spirituel. Les hôtels étaient bien situés et confortables.",
-            },
-          ],
-        }
-      } else if (id === "leisure") {
-        data = {
-          title: "Voyages Loisirs",
-          subtitle: "Découvrez Istanbul",
-          description:
-            "Qafilat Tayba Voyages vous invite à découvrir les merveilles d'Istanbul avec nos circuits touristiques spécialement conçus pour allier confort, découverte culturelle et détente.",
-          features: [
-            "Vols directs entre le Maroc et Istanbul",
-            "Hébergement dans des hôtels 4★ idéalement situés",
-            "Transferts aéroport-hôtel inclus",
-            "Visites guidées des principaux sites touristiques",
-            "Temps libre pour le shopping et les découvertes personnelles",
-            "Guide francophone expérimenté",
-          ],
-          packages: [
-            {
-              name: "Circuit Istanbul Juin 2025",
-              price: "À partir de 8 700 MAD",
-              description: "Un voyage de 8 jours pour découvrir les trésors d'Istanbul, entre Orient et Occident.",
-              features: ["Du 5 au 12 juin ou du 15 au 22 juin 2025", "Hôtel 4★", "Visites guidées incluses"],
-            },
-            {
-              name: "Escapade Istanbul 2024",
-              price: "À partir de 7 800 MAD",
-              description:
-                "Une semaine pour s'immerger dans l'atmosphère unique d'Istanbul, à la croisée des cultures.",
-              features: ["Plusieurs dates disponibles en 2024", "Hôtel 4★", "Programme complet de visites"],
-            },
-            {
-              name: "Istanbul Shopping & Culture",
-              price: "À partir de 9 500 MAD",
-              description:
-                "Un programme équilibré entre visites culturelles et temps libre pour le shopping dans les célèbres bazars.",
-              features: ["Dates flexibles", "Hôtel 4★ en centre-ville", "Guide spécialisé en histoire et culture"],
-            },
-          ],
-          faqs: [
-            {
-              question: "Faut-il un visa pour se rendre en Turquie?",
-              answer:
-                "Les ressortissants marocains sont exemptés de visa pour des séjours touristiques de moins de 90 jours en Turquie.",
-            },
-            {
-              question: "Quelle est la meilleure période pour visiter Istanbul?",
-              answer:
-                "Le printemps (avril-mai) et l'automne (septembre-octobre) offrent des températures agréables et moins de touristes. L'été peut être chaud et très fréquenté, tandis que l'hiver est plus frais mais offre des prix plus avantageux.",
-            },
-            {
-              question: "La monnaie utilisée en Turquie?",
-              answer:
-                "La monnaie locale est la livre turque (TRY). Les cartes de crédit sont largement acceptées dans les hôtels, restaurants et grands magasins, mais il est conseillé d'avoir un peu d'argent liquide pour les petits commerces.",
-            },
-          ],
-          testimonials: [
-            {
-              name: "Karim Benjelloun",
-              year: "Juin 2023",
-              text: "Un voyage parfaitement organisé. L'hôtel était idéalement situé, les visites très intéressantes et le guide excellent. Je recommande vivement!",
-            },
-            {
-              name: "Nadia El Fassi",
-              year: "Octobre 2023",
-              text: "Istanbul est une ville fascinante et Qafilat Tayba nous a permis de la découvrir dans les meilleures conditions. Un excellent rapport qualité-prix.",
-            },
-          ],
-        }
-      } else {
-        data = {
-          title: "Offre non trouvée",
-          description: "Désolé, nous n'avons pas trouvé l'offre que vous recherchez.",
-        }
+        setOffers(filtered)
       }
-
-      setOfferData(data)
       setLoading(false)
-    }, 500)
+    }
   }, [id])
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[400px]">
-        <div className="animate-pulse flex flex-col items-center">
-          <div className="h-8 bg-gray-200 rounded w-1/3 mb-4"></div>
-          <div className="h-4 bg-gray-200 rounded w-2/3 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2 mb-2"></div>
-          <div className="h-4 bg-gray-200 rounded w-3/5 mb-2"></div>
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex justify-center items-center">
+        <div className="space-y-8 animate-pulse max-w-md w-full">
+          <div className="h-16 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-2xl"></div>
+          <div className="space-y-4">
+            <div className="h-8 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-xl w-4/5"></div>
+            <div className="h-6 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-3/5"></div>
+            <div className="h-6 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-4/6"></div>
+          </div>
         </div>
       </div>
     )
   }
 
-  if (!offerData) {
+  if (!offers || offers.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-16">
-        <h2 className="text-2xl font-bold text-center">Offre non trouvée</h2>
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 flex justify-center items-center">
+        <div className="text-center space-y-6 max-w-md">
+          <div className="w-20 h-20 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-full mx-auto flex items-center justify-center shadow-inner">
+            <MapPin className="w-10 h-10 text-neutral-400" />
+          </div>
+          <h2 className="text-3xl font-light text-neutral-700">Aucune information trouvée</h2>
+          <p className="text-neutral-500 text-lg">Veuillez réessayer plus tard</p>
+        </div>
       </div>
     )
   }
 
-  return (
-    <div className="bg-white py-12 md:py-20">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="max-w-4xl mx-auto"
-        >
-          {/* Overview Section */}
-          <div className="mb-12">
-            <div className="flex flex-col items-center text-center mb-8">
-              <h1 className="text-3xl md:text-4xl font-bold mb-4">{offerData.title}</h1>
-              <div className="w-16 h-1 bg-[#FFD700] mb-4"></div>
-              <p className="text-lg md:text-xl text-muted-foreground mb-6">{offerData.subtitle}</p>
-              <p className="text-muted-foreground max-w-2xl">{offerData.description}</p>
+  // Premium hotel view
+  if (id === "hotel") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+        <div className="max-w-8xl mx-auto px-8 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Header */}
+            <div className="text-center mb-24">
+              <div className="inline-flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center shadow-sm">
+                  <HotelIcon className="w-8 h-8 text-amber-600" />
+                </div>
+                <h1 className="text-6xl lg:text-7xl font-extralight text-neutral-800 tracking-tight">Hôtels</h1>
+              </div>
+              <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mb-8"></div>
+              <p className="text-xl text-neutral-600 font-light max-w-lg mx-auto">
+                {offers.reduce((acc, o) => acc + (o.hotels?.length || 0), 0)} établissements d'exception
+              </p>
             </div>
 
-            {/* Key Features */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-8">
-              {offerData.features?.map((feature: string, index: number) => (
-                <div key={index} className="flex items-start p-3 bg-gray-50 rounded-lg border border-gray-100">
-                  <Check className="w-5 h-5 text-[#FFD700] mr-3 mt-0.5 flex-shrink-0" />
-                  <span className="text-sm">{feature}</span>
-                </div>
+            {/* Hotels Grid */}
+            <div className="space-y-24">
+              {offers.map((offer: any, idx: number) => (
+                <motion.div
+                  key={offer.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.15, duration: 0.7 }}
+                  className="space-y-12"
+                >
+                  <div className="flex items-center gap-4 justify-center">
+                    <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                    <h2 className="text-3xl font-extralight text-neutral-800 text-center">{offer.titre}</h2>
+                    <span className="px-4 py-2 bg-neutral-100 text-neutral-600 text-sm rounded-full font-light">
+                      {offer.hotels.length} hôtel{offer.hotels.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {offer.hotels?.map((hotel: any, idx: number) => (
+                      <motion.div
+                        key={hotel.id || idx}
+                        whileHover={{ y: -8, scale: 1.02 }}
+                        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                        className="bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/60 overflow-hidden hover:shadow-2xl hover:border-neutral-300/60 transition-all duration-500"
+                      >
+                        <div className="p-8 border-b border-neutral-100">
+                          <div className="flex items-start justify-between">
+                            <h3 className="text-xl font-light text-neutral-800">{hotel.nom}</h3>
+                            {hotel.distance && (
+                              <span className="text-xs text-neutral-500 bg-neutral-50 px-3 py-1.5 rounded-full">
+                                {hotel.distance}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="p-8 space-y-4">
+                          {hotel.tarifsChambre &&
+                            Object.entries(hotel.tarifsChambre).map(([type, prix]) =>
+                              prix ? (
+                                <div key={type} className="flex items-center gap-4">
+                                  <div className="w-2 h-2 bg-amber-400 rounded-full"></div>
+                                  <span className="text-sm text-neutral-600 capitalize flex-1 font-light">{type}</span>
+                                  <span className="font-medium text-neutral-800 text-lg">{typeof prix === "string" || typeof prix === "number" ? prix : ""} DH</span>
+                                </div>
+                              ) : null
+                            )}
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
               ))}
             </div>
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
 
-            {/* CTA Button */}
-            <div className="flex justify-center">
-              <Link href="/direct-reservation">
-                <Button className="bg-[#FFD700] hover:bg-[#E6C200] text-black px-6 py-6 h-auto text-base">
-                  Réserver maintenant
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Button>
-              </Link>
+  // Premium flight view
+  if (id === "flight") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+        <div className="max-w-7xl mx-auto px-8 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Header */}
+            <div className="text-center mb-24">
+              <div className="inline-flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-sky-100 to-sky-200 rounded-2xl flex items-center justify-center shadow-sm">
+                  <Plane className="w-8 h-8 text-sky-600" />
+                </div>
+                <h1 className="text-6xl lg:text-7xl font-extralight text-neutral-800 tracking-tight">Vols</h1>
+              </div>
+              <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-sky-400 to-transparent mx-auto mb-8"></div>
+              <p className="text-xl text-neutral-600 font-light max-w-lg mx-auto">
+                {offers.length} offre{offers.length > 1 ? "s" : ""} de voyage disponible{offers.length > 1 ? "s" : ""}
+              </p>
             </div>
-          </div>
 
-          {/* Tabs Section */}
-          <div className="mt-16">
-            <Tabs defaultValue="packages" className="w-full">
-              <TabsList className="w-full grid grid-cols-3 mb-8">
-                <TabsTrigger
-                  value="packages"
-                  className="data-[state=active]:bg-[#FFD700] data-[state=active]:text-black"
+            {/* Flights List */}
+            <div className="space-y-8">
+              {offers.map((offer: any, idx: number) => (
+                <motion.div
+                  key={offer.id}
+                  initial={{ opacity: 0, x: -30 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.15, duration: 0.7 }}
+                  className="bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/60 p-10 hover:shadow-2xl hover:border-neutral-300/60 transition-all duration-500"
                 >
-                  Forfaits
-                </TabsTrigger>
-                <TabsTrigger value="faqs" className="data-[state=active]:bg-[#FFD700] data-[state=active]:text-black">
-                  FAQ
-                </TabsTrigger>
-                <TabsTrigger
-                  value="testimonials"
-                  className="data-[state=active]:bg-[#FFD700] data-[state=active]:text-black"
-                >
-                  Témoignages
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Packages Tab */}
-              <TabsContent value="packages" className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {offerData.packages?.map((pkg: any, index: number) => (
-                    <div
-                      key={index}
-                      className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col h-full"
-                    >
-                      {/* Package Header */}
-                      <div className="bg-gradient-to-r from-amber-50 to-amber-100 p-4 border-b border-gray-100">
-                        <h3 className="font-bold text-lg">{pkg.name}</h3>
-                      </div>
-
-                      {/* Package Content */}
-                      <div className="p-5 flex-grow">
-                        <p className="text-muted-foreground mb-4 text-sm">{pkg.description}</p>
-
-                        {/* Features List */}
-                        <ul className="space-y-2 mt-4">
-                          {pkg.features?.map((feature: string, idx: number) => (
-                            <li key={idx} className="flex items-start">
-                              <Check className="h-4 w-4 text-[#FFD700] mr-2 mt-0.5" />
-                              <span className="text-sm">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-
-                      {/* Package Footer */}
-                      <div className="px-5 pb-5 pt-2 mt-auto">
-                        <Link href="/direct-reservation">
-                          <Button
-                            variant="outline"
-                            className="w-full border-[#FFD700] hover:bg-[#FFD700] hover:text-black text-sm"
-                          >
-                            Réserver ce forfait
-                          </Button>
-                        </Link>
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-8">
+                    <div className="flex-1 space-y-6">
+                      <h2 className="text-2xl font-light text-neutral-800">{offer.titre}</h2>
+                      
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 bg-sky-100 rounded-xl flex items-center justify-center">
+                            <Plane className="w-4 h-4 text-sky-600" />
+                          </div>
+                          <span className="text-neutral-600 font-light">
+                            {offer.compagniesAeriennes || "Non renseigné"}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center">
+                            <MapPin className="w-4 h-4 text-amber-600" />
+                          </div>
+                          <span className="text-neutral-600 font-light">{offer.destination}</span>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center">
+                            <Calendar className="w-4 h-4 text-amber-400" />
+                          </div>
+                          <span className="text-neutral-600 font-light">{offer.periode}</span>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </TabsContent>
+                    
+                    <div className="flex items-center">
+                      <div className="text-center">
+                        <div className="w-16 h-16 bg-neutral-100 rounded-2xl flex items-center justify-center mb-3">
+                          <Users className="w-6 h-6 text-neutral-600" />
+                        </div>
+                        <span className="text-sm text-neutral-500 font-light">{offer.nombrePersonnes}</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    )
+  }
 
-              {/* FAQs Tab */}
-              <TabsContent value="faqs">
-                <div className="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm">
-                  <Accordion type="single" collapsible className="w-full">
-                    {offerData.faqs?.map((faq: any, index: number) => (
-                      <AccordionItem key={index} value={`faq-${index}`} className="border-b border-gray-100 px-4">
-                        <AccordionTrigger className="text-left font-medium py-4 hover:no-underline">
-                          {faq.question}
-                        </AccordionTrigger>
-                        <AccordionContent className="text-muted-foreground pb-4">{faq.answer}</AccordionContent>
-                      </AccordionItem>
-                    ))}
-                  </Accordion>
+  // Card view for hajj and omra
+  if (id === "hajj" || id === "omra" || ["omra", "umrah", "omrah"].includes(id.toLowerCase())) {
+    // If an offer is selected, show detailed view
+    if (selectedOffer) {
+      return (
+        <div className="min-h-screen bg-white">
+          {/* Main Content */}
+          <div className="max-w-7xl mx-auto px-8 py-16">
+            {/* Price Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+              className="mb-20"
+            >
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/50 rounded-3xl p-8 lg:p-12">
+                <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+                  <div className="flex-1">
+                    <div className="flex items-baseline gap-4 mb-4">
+                      <span className="text-5xl lg:text-6xl font-light text-gray-900">{selectedOffer.prixBase}</span>
+                      <div className="text-gray-600">
+                        <p className="text-lg font-medium">par personne</p>
+                        <p className="text-sm">Tout inclus</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-4 text-sm text-gray-600">
+                      <div className="flex items-center gap-2">
+                        <Shield className="w-4 h-4 text-amber-500" />
+                        <span>Garantie meilleur prix</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Check className="w-4 h-4 text-amber-400" />
+                        <span>Annulation gratuite 72h</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Link href="/contact">
+                      <Button
+                        variant="outline"
+                        className="bg-amber-400 text-white hover:bg-amber-300 px-8 py-4 h-auto rounded-2xl font-medium text-lg"
+                      >
+                        <Phone className="w-5 h-5 mr-2" />
+                        Nous appeler
+                      </Button>
+                    </Link>
+                    <Link href="/direct-reservation">
+                      <Button className="bg-black text-white px-8 py-4 h-auto rounded-2xl font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-200">
+                        Réserver maintenant
+                        <ChevronRight className="w-5 h-5 ml-2" />
+                      </Button>
+                    </Link>
+                  </div>
                 </div>
-              </TabsContent>
+              </div>
+            </motion.div>
 
-              {/* Testimonials Tab */}
-              <TabsContent value="testimonials">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {offerData.testimonials?.map((testimonial: any, index: number) => (
-                    <div key={index} className="bg-white rounded-xl p-6 border border-gray-100 shadow-sm">
-                      <div className="flex items-center mb-4">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mr-4">
-                          <Users size={20} />
+            {/* Description */}
+            {selectedOffer.hebergement && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="mb-20"
+              >
+                <div className="bg-white border border-gray-200 rounded-3xl p-8 lg:p-12">
+                  <h2 className="text-3xl font-light text-gray-900 mb-6">À propos de ce voyage</h2>
+                  <p className="text-lg text-gray-600 leading-relaxed">{selectedOffer.hebergement}</p>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Services Grid */}
+            {selectedOffer.servicesInclus && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="mb-20"
+              >
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-light text-gray-900 mb-4">Ce qui est inclus</h2>
+                  <p className="text-lg text-gray-600">Profitez d'un voyage tout compris avec nos services premium</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {selectedOffer.servicesInclus.map((service: string, index: number) => (
+                    <motion.div
+                      key={index}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.1 * index, duration: 0.3 }}
+                      className="bg-white border border-gray-200 rounded-2xl p-6 hover:border-gray-300 hover:shadow-lg transition-all duration-200"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+                          <Check className="w-6 h-6 text-amber-400" />
                         </div>
                         <div>
-                          <h3 className="font-bold">{testimonial.name}</h3>
-                          <p className="text-sm text-muted-foreground">{testimonial.year}</p>
+                          <h3 className="font-medium text-gray-900 mb-1">{service}</h3>
+                          <p className="text-sm text-gray-600">Service inclus dans votre forfait</p>
                         </div>
                       </div>
-                      <p className="text-muted-foreground italic text-sm">"{testimonial.text}"</p>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </TabsContent>
-            </Tabs>
-          </div>
+              </motion.div>
+            )}
 
-          {/* Contact Section */}
-          <div className="mt-16 bg-gray-50 p-6 md:p-8 rounded-xl border border-gray-100">
-            <div className="flex flex-col md:flex-row md:items-center">
-              <div className="flex-1 mb-6 md:mb-0 md:mr-6">
-                <h2 className="text-xl font-semibold mb-2">Besoin de plus d'informations?</h2>
-                <p className="text-muted-foreground text-sm">
-                  Notre équipe est à votre disposition pour répondre à toutes vos questions et vous aider à choisir le
-                  forfait qui correspond le mieux à vos besoins.
+            {/* Enhanced Tabs Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.6 }}
+              className="mb-20"
+            >
+              <Tabs defaultValue="hotels" className="w-full">
+                <div className="flex justify-center mb-12">
+                  <TabsList className="bg-white p-2 rounded-2xl inline-flex">
+                    <TabsTrigger
+                      value="hotels"
+                      className="rounded-xl px-6 py-3 font-medium text-lg data-[state=active]:bg-gray-100 data-[state=active]:shadow-sm transition-all duration-200"
+                    >
+                      <HotelIcon className="w-5 h-5 mr-2" />
+                      Hébergements
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="dates"
+                      className="rounded-xl px-6 py-3 font-medium text-lg data-[state=active]:bg-gray-100 data-[state=active]:shadow-sm transition-all duration-200"
+                    >
+                      <Calendar className="w-5 h-5 mr-2" />
+                      Dates & Prix
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="details"
+                      className="rounded-xl px-6 py-3 font-medium text-lg data-[state=active]:bg-gray-100 data-[state=active]:shadow-sm transition-all duration-200"
+                    >
+                      <MapPin className="w-5 h-5 mr-2" />
+                      Détails
+                    </TabsTrigger>
+                  </TabsList>
+                </div>
+
+                {/* Hotels Tab */}
+                <TabsContent value="hotels" className="space-y-8">
+                  <div className="text-center mb-10">
+                    <h3 className="text-2xl font-light text-gray-900 mb-2">Hébergements sélectionnés</h3>
+                    <p className="text-gray-600">Des hôtels de qualité pour votre confort</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    {selectedOffer.hotels?.map((hotel: any, index: number) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1 * index, duration: 0.5 }}
+                        className="bg-white border border-gray-200 rounded-3xl overflow-hidden hover:border-gray-300 hover:shadow-xl transition-all duration-300"
+                      >
+                        <div className="h-48 bg-gradient-to-br from-blue-100 to-purple-100 relative">
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <HotelIcon className="w-12 h-12 text-blue-600" />
+                          </div>
+                          {hotel.distance && (
+                            <div className="absolute top-4 right-4">
+                              <span className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium text-gray-700">
+                                {hotel.distance}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        
+                        <div className="p-8">
+                          <h4 className="text-xl font-medium text-gray-900 mb-6">{hotel.nom}</h4>
+                          
+                          <div className="space-y-4">
+                            {hotel.tarifsChambre &&
+                              Object.entries(hotel.tarifsChambre).map(([type, prix]) =>
+                                prix ? (
+                                  <div key={type} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                    <div>
+                                      <span className="font-medium text-gray-900 capitalize">{type}</span>
+                                      <p className="text-sm text-gray-600">Chambre {type}</p>
+                                    </div>
+                                    <span className="text-xl font-semibold text-gray-900">{typeof prix === "string" || typeof prix === "number" ? prix : ""} DH</span>
+                                  </div>
+                                ) : null
+                              )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </TabsContent>
+
+                {/* Dates Tab */}
+                <TabsContent value="dates">
+                  <div className="text-center mb-10">
+                    <h3 className="text-2xl font-light text-gray-900 mb-2">Dates disponibles</h3>
+                    <p className="text-gray-600">Choisissez la période qui vous convient</p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {selectedOffer.datesDisponibles?.map((date: any, index: number) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.1 * index, duration: 0.3 }}
+                        className="bg-white border border-gray-200 rounded-2xl p-6 hover:border-amber-300 hover:shadow-lg transition-all duration-200 cursor-pointer group"
+                      >
+                        <div className="text-center">
+                          <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-200 transition-colors duration-200">
+                            <Calendar className="w-8 h-8 text-amber-600" />
+                          </div>
+                          <h4 className="font-medium text-gray-900 mb-2">{date.periode}</h4>
+                          <p className="text-sm text-gray-600 mb-4">
+                            Du {new Date(date.dateDebut).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} au {new Date(date.dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })}
+                          </p>
+                          <div className="text-lg font-semibold text-amber-600">{selectedOffer.prixBase}</div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </TabsContent>
+
+                {/* Details Tab */}
+                <TabsContent value="details">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    {/* Pricing Details */}
+                    <div className="bg-white border border-gray-200 rounded-3xl p-8">
+                      <h3 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                        <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center mr-3">
+                          <Users className="w-4 h-4 text-emerald-600" />
+                        </div>
+                        Tarification détaillée
+                      </h3>
+                      <div className="space-y-4">
+                        {selectedOffer.tarifsChambre &&
+                          Object.entries(selectedOffer.tarifsChambre).map(([type, prix]) =>
+                            prix ? (
+                              <div key={type} className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                                <span className="font-medium text-gray-700 capitalize">Chambre {type}</span>
+                                <span className="text-xl font-semibold text-gray-900">{typeof prix === "string" || typeof prix === "number" ? prix : ""} DH</span>
+                              </div>
+                            ) : null
+                          )}
+                      
+                        <div className="border-t pt-4 mt-6">
+                          <div className="flex items-center justify-between p-4 bg-amber-50 rounded-xl">
+                            <span className="font-semibold text-gray-900">Prix de base par personne</span>
+                            <span className="text-2xl font-bold text-amber-600">{selectedOffer.prixBase}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Info */}
+                    <div className="space-y-8">
+                      <div className="bg-white border border-gray-200 rounded-3xl p-8">
+                        <h3 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                            <Plane className="w-4 h-4 text-blue-600" />
+                          </div>
+                          Transport
+                        </h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">Compagnie aérienne</span>
+                            <span className="font-medium text-gray-900">{selectedOffer.compagniesAeriennes || 'À confirmer'}</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <span className="text-gray-600">Type de vol</span>
+                            <span className="font-medium text-gray-900">Vol direct</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white border border-gray-200 rounded-3xl p-8">
+                        <h3 className="text-xl font-medium text-gray-900 mb-6 flex items-center">
+                          <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                            <Shield className="w-4 h-4 text-purple-600" />
+                          </div>
+                          Garanties
+                        </h3>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3">
+                            <Check className="w-5 h-5 text-emerald-500" />
+                            <span className="text-gray-700">Assurance voyage incluse</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Check className="w-5 h-5 text-emerald-500" />
+                            <span className="text-gray-700">Support 24h/24</span>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <Check className="w-5 h-5 text-emerald-500" />
+                            <span className="text-gray-700">Guide francophone</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </motion.div>
+
+            {/* Enhanced Contact Section */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.6 }}
+              className="bg-black rounded-3xl p-8 lg:p-12 text-white"
+            >
+              <div className="text-center mb-10">
+                <h2 className="text-3xl font-light mb-4">Besoin d'aide pour réserver ?</h2>
+                <p className="text-xl text-gray-300 leading-relaxed max-w-2xl mx-auto">
+                  Notre équipe d'experts est disponible pour vous accompagner dans votre projet de voyage spirituel
                 </p>
               </div>
-              <div className="flex flex-col sm:flex-row gap-3">
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Phone className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-medium mb-2">Appelez-nous</h3>
+                  <p className="text-gray-300 text-sm">Du lundi au vendredi 9h-18h</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Mail className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-medium mb-2">Écrivez-nous</h3>
+                  <p className="text-gray-300 text-sm">Réponse sous 24h garantie</p>
+                </div>
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Users className="w-8 h-8" />
+                  </div>
+                  <h3 className="font-medium mb-2">Rencontrez-nous</h3>
+                  <p className="text-gray-300 text-sm">Agence ouverte 6j/7</p>
+                </div>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/contact">
                   <Button
                     variant="outline"
-                    className="border-[#FFD700] text-black hover:bg-[#FFD700] hover:text-black w-full sm:w-auto"
+                    className="border-white/30 text-white hover:bg-white/10 px-8 py-4 h-auto rounded-2xl font-medium text-lg bg-transparent"
                   >
-                    Contactez-nous
+                    <Phone className="w-5 h-5 mr-2" />
+                    Nous contacter
                   </Button>
                 </Link>
                 <Link href="/direct-reservation">
-                  <Button className="bg-[#FFD700] hover:bg-[#E6C200] text-black w-full sm:w-auto">
-                    Réserver maintenant
+                  <Button className="bg-amber-400 hover:bg-amber-500 text-white px-8 py-4 h-auto rounded-2xl font-medium text-lg shadow-lg">
+                    <Calendar className="w-5 h-5 mr-2" />
+                    Réserver en ligne
                   </Button>
                 </Link>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </motion.div>
+        </div>
+      )
+    }
+
+    // Card view for hajj and omra offers
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+        <div className="max-w-8xl mx-auto px-8 py-24">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Header */}
+            <div className="text-center mb-24">
+              <div className="inline-flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-amber-200 rounded-2xl flex items-center justify-center shadow-sm">
+                  <Calendar className="w-8 h-8 text-amber-400" />
+                </div>
+                <h1 className="text-6xl lg:text-7xl font-extralight text-neutral-800 tracking-tight">
+                  {id === "hajj" ? "Offres Hajj" : "Offres Omra"}
+                </h1>
+              </div>
+              <div className="w-32 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mb-8"></div>
+              <p className="text-xl text-neutral-600 font-light max-w-lg mx-auto">
+                {offers.length} offre{offers.length > 1 ? "s" : ""} disponible{offers.length > 1 ? "s" : ""}
+              </p>
+            </div>
+
+            {/* Offers Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {offers.map((offer: any, idx: number) => (
+                <motion.div
+                  key={offer.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: idx * 0.1, duration: 0.7 }}
+                  onClick={() => setSelectedOffer(offer)}
+                  className="group bg-white/80 backdrop-blur-sm rounded-3xl border border-neutral-200/60 overflow-hidden hover:shadow-2xl hover:border-neutral-300/60 transition-all duration-500 cursor-pointer"
+                >
+                  <div>
+                    <div className="relative">
+                      <div className="h-64 bg-gradient-to-br from-neutral-200 to-neutral-300 relative overflow-hidden">
+                        {offer.image && (
+                          <img
+                            src={offer.image}
+                            alt={offer.titre}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                        
+                        <div className="absolute top-4 left-4">
+                          <span className={`px-3 py-1.5 rounded-full text-xs font-medium ${
+                            offer.statut === 'active' ? 'bg-emerald-100 text-emerald-700' :
+                            offer.statut === 'inactive' ? 'bg-red-100 text-red-700' :
+                            'bg-neutral-100 text-neutral-700'
+                          }`}>
+                            {offer.statut === 'active' ? 'Disponible' : offer.statut === 'inactive' ? 'Complet' : 'Brouillon'}
+                          </span>
+                        </div>
+                        
+                        <div className="absolute top-4 right-4">
+                          <div className="flex items-center space-x-2 bg-black/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                            <Star className="w-4 h-4 text-amber-400 fill-current" />
+                            <span className="text-sm font-medium text-white">{offer.note}</span>
+                          </div>
+                        </div>
+
+                        <div className="absolute bottom-4 right-4">
+                          <div className="flex items-center space-x-2">
+                            <button className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors duration-200">
+                              <Heart className="w-4 h-4" />
+                            </button>
+                            <button className="p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-white/30 transition-colors duration-200">
+                              <Bookmark className="w-4 h-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="p-8">
+                      <div className="mb-6">
+                        <h3 className="text-2xl font-light text-neutral-800 mb-3 leading-tight">
+                          {offer.titre}
+                        </h3>
+                        <p className="text-neutral-600 font-light">{offer.periode}</p>
+                      </div>
+                      
+                      <div className="space-y-3 mb-6">
+                        <div className="flex items-center text-sm text-neutral-600">
+                          <MapPin className="w-4 h-4 mr-3 text-emerald-500" />
+                          <span className="font-light">{offer.destination}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-neutral-600">
+                          <Calendar className="w-4 h-4 mr-3 text-emerald-500" />
+                          <span className="font-light">{offer.datesDisponibles.length > 0 ? `${offer.datesDisponibles.length} dates disponibles` : offer.duree}</span>
+                        </div>
+                        <div className="flex items-center text-sm text-neutral-600">
+                          <Users className="w-4 h-4 mr-3 text-amber-400" />
+                          <span className="font-light">{offer.nombrePersonnes} personnes • {offer.duree}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {offer.servicesInclus?.slice(0, 2).map((service: string, index: number) => (
+                          <span
+                            key={index}
+                            className="px-3 py-1.5 bg-amber-50 text-amber-400 text-xs rounded-full font-light"
+                          >
+                            {service.length > 20 ? service.substring(0, 20) + '...' : service}
+                          </span>
+                        ))}
+                        {offer.servicesInclus?.length > 2 && (
+                          <span className="px-3 py-1.5 bg-neutral-100 text-neutral-600 text-xs rounded-full font-light">
+                            +{offer.servicesInclus.length - 2}
+                          </span>
+                        )}
+                      </div>
+
+                      {offer.hotels?.length > 0 && (
+                        <div className="mb-6">
+                          <p className="text-xs text-neutral-500 mb-2 font-light">{offer.hotels.length} hôtel{offer.hotels.length > 1 ? 's' : ''} disponible{offer.hotels.length > 1 ? 's' : ''}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {offer.hotels.slice(0, 2).map((hotel: any, index: number) => (
+                              <span key={index} className="px-3 py-1 bg-sky-50 text-sky-700 text-xs rounded-full font-light">
+                                {hotel.nom}
+                              </span>
+                            ))}
+                            {offer.hotels.length > 2 && (
+                              <span className="px-3 py-1 bg-neutral-100 text-neutral-600 text-xs rounded-full font-light">
+                                +{offer.hotels.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                      
+                      <div className="flex items-center justify-between pt-6 border-t border-neutral-100">
+                        <div>
+                          <p className="text-2xl font-light text-neutral-800">
+                            {offer.prixBase}
+                          </p>
+                          <p className="text-xs text-neutral-500 font-light">par personne</p>
+                        </div>
+                        
+                        <div className="flex items-center text-amber-400 group-hover:translate-x-1 transition-transform duration-300">
+                          <span className="text-sm font-light mr-2">Voir détails</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
       </div>
-    </div>
-  )
-}
+    )
+  }
+
+  // Fallback for other types - show detailed view directly
+  return (
+    <div className="min-h-screen bg-white">
+      <div className="max-w-6xl mx-auto px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {offers.map((offerData: any, idx: number) => (
+            <div key={offerData.id} className={idx > 0 ? "mt-32" : "pt-16"}>
+              {/* Price Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                className="bg-gradient-to-r from-neutral-50 to-neutral-100 rounded-2xl p-8 mb-16 text-center"
+              >
+                <p className="text-sm text-neutral-600 mb-2">À partir de</p>
+                <p className="text-4xl font-light text-neutral-900 mb-2">{offerData.prixBase}</p>
+                <p className="text-sm text-neutral-600">par personne</p>
+                <Link href="/direct-reservation" className="mt-6 inline-block">
+                  <Button className="bg-neutral-900 hover:bg-neutral-800 text-white px-8 py-3 rounded-xl font-medium transition-all duration-200 hover:scale-105">
+                    Réserver maintenant
+                  </Button>
+                </Link>
+              </motion.div>
+
+              {/* Services Grid */}
+              {offerData.servicesInclus && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="mb-20"
+                >
+                  <h2 className="text-2xl font-light text-neutral-900 mb-8 text-center">Services inclus</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                    {offerData.servicesInclus.map((feature: string, index: number) => (
+                      <div
+                        key={index}
+                        className="flex items-center gap-4 p-4 bg-white border border-neutral-200 rounded-xl hover:border-neutral-300 transition-colors duration-200"
+                      >
+                        <div className="w-5 h-5 bg-amber-100 rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-amber-400" />
+                        </div>
+                        <span className="text-neutral-700 font-light">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Tabs Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="mb-20"
+              >
+                <Tabs defaultValue="packages" className="w-full">
+                  <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-neutral-100 p-1 rounded-xl">
+                    <TabsTrigger
+                      value="packages"
+                      className="rounded-lg font-medium text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    >
+                      Hôtels
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="faqs"
+                      className="rounded-lg font-medium text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    >
+                      Dates
+                    </TabsTrigger>
+                    <TabsTrigger
+                      value="testimonials"
+                      className="rounded-lg font-medium text-sm data-[state=active]:bg-white data-[state=active]:shadow-sm"
+                    >
+                      Tarifs
+                    </TabsTrigger>
+                  </TabsList>
+
+                  {/* Hotels Tab */}
+                  <TabsContent value="packages" className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {offerData.hotels?.map((hotel: any, index: number) => (
+                        <motion.div
+                          key={index}
+                          whileHover={{ y: -4 }}
+                          transition={{ duration: 0.2 }}
+                          className="bg-white border border-neutral-200 rounded-2xl p-6 hover:border-neutral-300 hover:shadow-lg transition-all duration-200"
+                        >
+                          <div className="mb-4">
+                            <h3 className="text-lg font-medium text-neutral-900 mb-2">{hotel.nom}</h3>
+                            {hotel.distance && (
+                              <p className="text-sm text-neutral-600">{hotel.distance}</p>
+                            )}
+                          </div>
+
+                          <div className="space-y-3">
+                            {hotel.tarifsChambre &&
+                              Object.entries(hotel.tarifsChambre).map(([type, prix]) =>
+                                prix ? (
+                                  <div key={type} className="flex items-center justify-between">
+                                    <span className="text-sm text-neutral-600 capitalize">{type}</span>
+                                    <span className="font-medium text-neutral-900">{typeof prix === "string" || typeof prix === "number" ? prix : ""} DH</span>
+                                  </div>
+                                ) : null
+                              )}
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </TabsContent>
+
+                  {/* Dates Tab */}
+                  <TabsContent value="faqs">
+                    <div className="max-w-2xl mx-auto">
+                      <div className="space-y-4">
+                        {offerData.datesDisponibles?.map((date: any, index: number) => (
+                          <div
+                            key={index}
+                            className="bg-white border border-neutral-200 rounded-xl p-6 hover:border-neutral-300 transition-colors duration-200"
+                          >
+                            <h3 className="font-medium text-neutral-900 mb-2">{date.periode}</h3>
+                            <p className="text-sm text-neutral-600">Du {date.dateDebut} au {date.dateFin}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  {/* Tarifs Tab */}
+                  <TabsContent value="testimonials">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                      <div className="bg-white border border-neutral-200 rounded-2xl p-8">
+                        <h3 className="text-xl font-medium text-neutral-900 mb-6">Tarifs par chambre</h3>
+                        <div className="space-y-4">
+                          {offerData.tarifsChambre &&
+                            Object.entries(offerData.tarifsChambre).map(([type, prix]) =>
+                              prix ? (
+                                <div key={type} className="flex items-center justify-between py-2">
+                                  <span className="text-neutral-600 capitalize">{type}</span>
+                                  <span className="font-medium text-neutral-900 text-lg">{typeof prix === "string" || typeof prix === "number" ? prix : ""} DH</span>
+                                </div>
+                              ) : null
+                            )}
+                        </div>
+                      </div>
+                      
+                      <div className="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 rounded-2xl p-8 text-center">
+                        <h3 className="text-xl font-medium text-neutral-900 mb-6">Prix de base</h3>
+                        <p className="text-4xl font-light text-neutral-900 mb-2">{offerData.prixBase}</p>
+                        <p className="text-neutral-600">par personne</p>
+                      </div>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </motion.div>
+
+              {/* Contact Section */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.0, duration: 0.6 }}
+                className="bg-neutral-50 rounded-2xl p-8 lg:p-12 mb-16"
+              >
+                <div className="text-center max-w-2xl mx-auto">
+                  <h2 className="text-2xl font-light text-neutral-900 mb-4">Des questions ?</h2>
+                  <p className="text-neutral-600 mb-8 leading-relaxed">
+                    Notre équipe est à votre disposition pour vous accompagner dans votre projet de voyage.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    <Link href="/contact">
+                      <Button
+                        variant="outline"
+                        className="border-neutral-300 text-neutral-700 hover:bg-neutral-100 px-6 py-3 rounded-xl font-medium"
+                      >
+                        Nous contacter
+                      </Button>
+                    </Link>
+                    <Link href="/direct-reservation">
+                      <Button className="bg-neutral-900 hover:bg-neutral-800 text-white px-6 py-3 rounded-xl font-medium">
+                        Réserver maintenant
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          ))}
+          </motion.div>
+        </div>
+      </div>
+    )
+  }

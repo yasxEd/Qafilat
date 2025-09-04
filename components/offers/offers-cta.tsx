@@ -4,21 +4,20 @@ import { Phone, Mail } from "lucide-react"
 
 export default function OffersCTA() {
   return (
-    <section className="py-16 bg-white dark:bg-gray-950">
-      <div className="container mx-auto px-4">
-        <div className="bg-gradient-to-r from-gray-900 to-gray-800 rounded-xl p-8 md:p-12 shadow-xl">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+    <section className="py-24 bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+      <div className="container mx-auto px-8">
+        <div className="bg-black rounded-3xl p-12 md:p-20 shadow-2xl relative overflow-hidden">
+          
+          
+          <div className="max-w-4xl mx-auto text-center relative z-10">
+            <h2 className="text-3xl md:text-4xl font-light text-white mb-6">
               Vous ne trouvez pas l'offre qui vous convient ?
             </h2>
-            <p className="text-gray-300 mb-8">
-              Contactez-nous pour une offre personnalisée adaptée à vos besoins spécifiques. Notre équipe est à votre
-              disposition pour créer le voyage spirituel parfait pour vous.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Link href="/contact">
-                <Button size="lg" className="w-full sm:w-auto">
-                  <Phone className="mr-2 h-4 w-4" />
+                <Button size="lg" className="w-full sm:w-auto bg-white text-neutral-900 hover:bg-neutral-100 px-8 py-4 rounded-2xl font-light text-base transition-all duration-300 hover:scale-105">
+                  <Phone className="mr-3 h-5 w-5" />
                   Nous contacter
                 </Button>
               </Link>
@@ -26,9 +25,9 @@ export default function OffersCTA() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="w-full sm:w-auto bg-transparent border-white text-white hover:bg-white hover:text-gray-900"
+                  className="w-full sm:w-auto bg-transparent border-white/30 text-white hover:bg-white/10 hover:border-white px-8 py-4 rounded-2xl font-light text-base transition-all duration-300"
                 >
-                  <Mail className="mr-2 h-4 w-4" />
+                  <Mail className="mr-3 h-5 w-5" />
                   Envoyer un email
                 </Button>
               </Link>

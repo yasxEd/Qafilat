@@ -10,15 +10,15 @@ const Footer = dynamic(() => import("@/components/footer"))
 const FloatingContact = dynamic(() => import("@/components/floating-contact"))
 
 export const metadata: Metadata = {
-  title: "Nos Offres | Qafilat Tayba",
+  title: "Nos Offres Premium | Qafilat Tayba",
   description:
-    "Découvrez nos offres de voyages pour le Hajj et l'Omra. Des forfaits adaptés à tous les budgets avec un service de qualité pour un pèlerinage serein.",
-  keywords: "offres, hajj, omra, qafilat tayba, voyage, pèlerinage, forfaits, makkah, médine, maroc",
+    "Découvrez nos offres exclusives de voyages pour le Hajj et l'Omra. Des forfaits premium adaptés à tous les budgets avec un service d'exception pour un pèlerinage serein.",
+  keywords: "offres premium, hajj, omra, qafilat tayba, voyage luxe, pèlerinage, forfaits exclusifs, makkah, médine, maroc",
 }
 
 export default function OffersPage() {
   return (
-    <main className="min-h-screen">
+    <main className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
       <Header />
       <OffersHero />
       <OffersList />

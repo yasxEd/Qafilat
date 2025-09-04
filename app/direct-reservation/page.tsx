@@ -7,7 +7,6 @@ import FloatingContact from "@/components/floating-contact"
 export default function DirectReservationPage() {
   return (
     <main className="min-h-screen flex flex-col">
-      <Header />
       <DirectReservationHero />
       <DirectReservationForm />
       <Footer />

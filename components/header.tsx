@@ -143,9 +143,9 @@ export default function Header() {
       {/* Main Header */}
       <motion.header
         ref={headerRef}
-        // Move navbar further down (e.g. 24px when snapped, 44px when not)
+        // Move navbar slightly further down
         animate={{
-          top: visible || isLoginPage ? 24 : 44,
+          top: visible || isLoginPage ? 32 : 60,
         }}
         initial={false}
         transition={{
@@ -157,31 +157,10 @@ export default function Header() {
         style={{ marginTop: "0px" }}
       >
         {/* Desktop Navigation */}
-        <motion.div
-          animate={{
-            backdropFilter: visible || isLoginPage ? "blur(10px)" : "none",
-            boxShadow:
-              visible || isLoginPage
-                ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
-                : "none",
-            width: visible || isLoginPage ? "75%" : "100%",
-            y: visible || isLoginPage ? 0 : 20, // Animate upwards when visible
-            borderRadius: visible || isLoginPage ? "2rem" : "0rem", // pill shape when visible
-            backgroundColor: visible || isLoginPage ? "#FFFFFF" : "transparent",
-          }}
-          transition={{
-            type: "spring",
-            stiffness: 200,
-            damping: 50,
-          }}
-          style={{
-            minWidth: "800px",
-          }}
-          className={cn(
-            "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start px-4 py-2 lg:flex",
-            visible || isLoginPage ? "bg-white/80 shadow-lg" : "bg-transparent",
-          )}
-        >
+        <div className={cn(
+          "relative z-[60] mx-auto hidden w-full max-w-7xl flex-row items-center justify-between self-start px-4 py-2 lg:flex",
+          "bg-transparent"
+        )}>
           {/* Logo replaced with hero-logo.png */}
           <Link
             href="/"
@@ -197,10 +176,27 @@ export default function Header() {
             />
           </Link>
 
-          {/* Nav Items */}
+          {/* Nav Items - Only this section gets pill styling */}
           <motion.div
             onMouseLeave={() => setHovered(null)}
-            className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium lg:flex"
+            animate={{
+              backdropFilter: visible || isLoginPage ? "blur(10px)" : "none",
+              boxShadow:
+                visible || isLoginPage
+                  ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
+                  : "none",
+              borderRadius: visible || isLoginPage ? "2rem" : "0rem",
+              backgroundColor: visible || isLoginPage ? "#FFFFFF" : "transparent",
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 200,
+              damping: 50,
+            }}
+            className={cn(
+              "flex flex-row items-center justify-center space-x-2 text-sm font-medium px-4 py-2",
+              visible || isLoginPage ? "bg-white/80 shadow-lg" : "bg-transparent"
+            )}
           >
             {navItems.map((item, idx) => (
               <div key={`nav-item-${idx}`} className="relative">
@@ -279,7 +275,7 @@ export default function Header() {
               Pré-inscription
             </Link>
           )}
-        </motion.div>
+        </div>
 
         {/* Mobile Navigation */}
         <motion.div

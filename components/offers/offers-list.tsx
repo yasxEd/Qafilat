@@ -1,11 +1,27 @@
 "use client"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Calendar, MapPin, Plane } from "lucide-react"
+import { ArrowRight, Calendar, MapPin, Plane, Star } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 
 export default function OffersList() {
+  const [offers, setOffers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    setLoading(true)
+    // Load offers from localStorage
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("offres")
+      if (saved) {
+        setOffers(JSON.parse(saved))
+      }
+      setLoading(false)
+    }
+  }, [])
+
   const container = {
     hidden: { opacity: 0 },
     show: {
@@ -17,102 +33,178 @@ export default function OffersList() {
   }
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 40 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } },
   }
 
-  const offers = [
-    {
-      id: "hajj",
-      title: "Hajj",
-      subtitle: "Saison 1446H (2025)",
-      icon: <Calendar className="h-6 w-6 text-[#FFD700]" />,
-      description:
-        "Inscriptions ouvertes pour le Hajj 2025 avec des programmes complets incluant transport, hébergement et accompagnement spirituel. Nos forfaits sont conçus pour vous offrir une expérience spirituelle inoubliable avec un accompagnement de qualité.",
-      image: "/f6.avif",
-    },
-    {
-      id: "omra",
-      title: "Omra",
-      subtitle: "Programmes 2024-2025",
-      icon: <MapPin className="h-6 w-6 text-[#FFD700]" />,
-      description:
-        "Programmes d'Omra pour toutes les saisons, incluant Ramadan et Chaabane, avec des forfaits tout compris à des prix avantageux. Profitez de notre expertise pour accomplir votre Omra dans les meilleures conditions avec un service personnalisé.",
-      image: "https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      id: "leisure",
-      title: "Voyages Loisirs",
-      subtitle: "Découvrez Istanbul",
-      icon: <Plane className="h-6 w-6 text-[#FFD700]" />,
-      description:
-        "Circuits touristiques en Turquie à partir de 7800 MAD, incluant hébergement 4★, vols et transferts pour juin 2025. Explorez les merveilles d'Istanbul avec nos guides expérimentés et profitez d'un séjour inoubliable à la croisée des cultures.",
-      image: "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1200&auto=format&fit=crop",
-    },
-  ]
-
-  return (
-    <section className="py-20 bg-white dark:bg-gray-950">
-      <div className="container px-4 mx-auto">
-        <div className="max-w-2xl mx-auto text-center mb-16">
-          <h2 className="text-3xl font-bold tracking-tight mb-4">Nos Offres de Voyage</h2>
-          <div className="w-16 h-1 bg-[#FFD700] mx-auto mb-6"></div>
-          <p className="text-muted-foreground">
-            Découvrez nos forfaits exclusifs pour le Hajj, l'Omra et les voyages de loisirs, soigneusement conçus pour
-            répondre à vos besoins.
-          </p>
-        </div>
-
-        <motion.div variants={container} initial="hidden" animate="show" className="flex flex-col space-y-12">
-          {offers.map((offer, index) => (
-            <motion.div key={offer.id} variants={item} className="group">
-              <div
-                className={`flex flex-col ${
-                  index % 2 === 1 ? "md:flex-row-reverse" : "md:flex-row"
-                } bg-white dark:bg-gray-900 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300`}
-              >
-                {/* Image Section */}
-                <div className="relative w-full md:w-1/2 h-80 md:h-[400px]">
-                  <Image
-                    src={offer.image || "/placeholder.svg"}
-                    alt={offer.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden"></div>
-                  <div className="absolute bottom-0 left-0 p-4 md:hidden">
-                    <div className="flex items-center gap-2 mb-1">
-                      {offer.icon}
-                      <span className="font-medium text-white">{offer.title}</span>
+  if (loading) {
+    return (
+      <section className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 py-32">
+        <div className="max-w-8xl mx-auto px-8">
+          <div className="text-center mb-28">
+            <div className="space-y-6 animate-pulse">
+              <div className="h-16 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-2xl w-96 mx-auto"></div>
+              <div className="w-40 h-0.5 bg-gradient-to-r from-neutral-200 to-neutral-300 mx-auto"></div>
+              <div className="h-8 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-xl w-[480px] mx-auto"></div>
+            </div>
+          </div>
+          
+          <div className="space-y-12">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden animate-pulse border border-neutral-200/60">
+                <div className="flex flex-col lg:flex-row h-[500px]">
+                  <div className="w-full lg:w-3/5 bg-gradient-to-r from-neutral-200 to-neutral-300"></div>
+                  <div className="w-full lg:w-2/5 p-12 space-y-6">
+                    <div className="h-8 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-xl w-3/4"></div>
+                    <div className="h-10 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-xl w-1/2"></div>
+                    <div className="space-y-3">
+                      <div className="h-6 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg"></div>
+                      <div className="h-6 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-lg w-5/6"></div>
                     </div>
-                    <h3 className="text-xl font-bold text-white">{offer.subtitle}</h3>
-                  </div>
-                </div>
-
-                {/* Content Section */}
-                <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center">
-                  <div className="hidden md:flex items-center gap-2 mb-2">
-                    {offer.icon}
-                    <span className="font-medium text-gray-500">{offer.title}</span>
-                  </div>
-                  <h3 className="hidden md:block text-2xl font-bold mb-4">{offer.subtitle}</h3>
-                  <p className="text-muted-foreground mb-6">{offer.description}</p>
-                  <div>
-                    <Link href={`/offers/${offer.id}`}>
-                      <Button
-                        variant="outline"
-                        className="group-hover:border-[#FFD700] group-hover:text-[#FFD700] transition-colors"
-                      >
-                        Voir les détails
-                        <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </Button>
-                    </Link>
+                    <div className="h-12 bg-gradient-to-r from-neutral-200 to-neutral-300 rounded-2xl w-40"></div>
                   </div>
                 </div>
               </div>
-            </motion.div>
-          ))}
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100 py-32">
+      <div className="max-w-8xl mx-auto px-8">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center mb-28"
+        >
+          <h2 className="text-6xl lg:text-7xl font-extralight text-neutral-800 mb-8 tracking-tight">
+            Nos Offres Premium
+          </h2>
+          <div className="w-40 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent mx-auto mb-10"></div>
+          <p className="text-2xl text-neutral-600 font-light max-w-3xl mx-auto leading-relaxed">
+            Découvrez nos forfaits exclusifs pour le Hajj, l'Omra et les voyages de loisirs, soigneusement conçus pour
+            une expérience d'exception.
+          </p>
         </motion.div>
+
+        {offers.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center py-28"
+          >
+            <div className="w-32 h-32 bg-gradient-to-br from-neutral-100 to-neutral-200 rounded-3xl flex items-center justify-center mx-auto mb-10 shadow-inner">
+              <Star className="w-16 h-16 text-neutral-400" />
+            </div>
+            <h3 className="text-3xl font-light text-neutral-800 mb-6">Aucune offre trouvée</h3>
+            <p className="text-neutral-600 mb-10 max-w-lg mx-auto leading-relaxed font-light text-lg">
+              Commencez par créer votre première offre de voyage dans le dashboard.
+            </p>
+            <Link href="/offer-dashboard">
+              <Button className="bg-neutral-900 hover:bg-neutral-800 text-white px-10 py-6 h-auto rounded-2xl transition-all duration-300 hover:shadow-xl hover:scale-105 font-light text-lg">
+                Accéder au dashboard
+                <ArrowRight className="ml-3 h-5 w-5" />
+              </Button>
+            </Link>
+          </motion.div>
+        ) : (
+          <motion.div variants={container} initial="hidden" animate="show" className="space-y-16">
+            {offers.map((offer, index) => (
+              <motion.div key={offer.id} variants={item}>
+                <div
+                  className={`group bg-white/80 backdrop-blur-sm rounded-3xl overflow-hidden border border-neutral-200/60 hover:shadow-2xl hover:border-neutral-300/60 transition-all duration-700 ${
+                    index % 2 === 1 ? "lg:flex-row-reverse" : ""
+                  }`}
+                >
+                  <div className="flex flex-col lg:flex-row min-h-[600px]">
+                    {/* Image Section */}
+                    <div className={`relative w-full lg:w-3/5 ${index % 2 === 1 ? "lg:order-2" : ""}`}>
+                      <div className="relative h-96 lg:h-full overflow-hidden">
+                        <Image
+                          src={offer.image || "/placeholder.svg"}
+                          alt={offer.titre}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+                        
+                        {/* Mobile overlay content */}
+                        <div className="absolute bottom-0 left-0 right-0 p-8 lg:hidden">
+                          <div className="flex items-center gap-4 mb-3">
+                            <div className="w-10 h-10 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center">
+                              {offer.destination?.toLowerCase().includes("turquie") || offer.destination?.toLowerCase().includes("istanbul") ? (
+                                <Plane className="h-5 w-5 text-white" />
+                              ) : offer.titre?.toLowerCase().includes("hajj") ? (
+                                <Calendar className="h-5 w-5 text-white" />
+                              ) : (
+                                <MapPin className="h-5 w-5 text-white" />
+                              )}
+                            </div>
+                            <span className="text-white/90 font-light text-lg">{offer.titre}</span>
+                          </div>
+                          <h3 className="text-3xl font-light text-white">{offer.periode}</h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Content Section */}
+                    <div className={`w-full lg:w-2/5 p-10 lg:p-16 flex flex-col justify-center ${index % 2 === 1 ? "lg:order-1" : ""}`}>
+                      {/* Desktop content */}
+                      <div className="hidden lg:block">
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className="w-12 h-12 bg-neutral-100 rounded-2xl flex items-center justify-center">
+                            {offer.destination?.toLowerCase().includes("turquie") || offer.destination?.toLowerCase().includes("istanbul") ? (
+                              <Plane className="h-6 w-6 text-neutral-600" />
+                            ) : offer.titre?.toLowerCase().includes("hajj") ? (
+                              <Calendar className="h-6 w-6 text-neutral-600" />
+                            ) : (
+                              <MapPin className="h-6 w-6 text-neutral-600" />
+                            )}
+                          </div>
+                          <span className="text-neutral-600 font-light text-lg">{offer.titre}</span>
+                        </div>
+                        
+                        <h3 className="text-4xl font-light text-neutral-800 mb-8 leading-tight">
+                          {offer.periode}
+                        </h3>
+                      </div>
+
+                      <p className="text-neutral-600 mb-10 leading-relaxed text-lg font-light">
+                        {offer.hebergement}
+                      </p>
+
+                      <div className="flex items-center gap-6">
+                        <Link href={`/offers/${offer.id}`}>
+                          <Button
+                            variant="outline"
+                            className="group/btn border-neutral-300 text-neutral-700 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 transition-all duration-300 px-8 py-4 rounded-2xl font-light text-base"
+                          >
+                            Voir les détails
+                            <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover/btn:translate-x-1" />
+                          </Button>
+                        </Link>
+                        
+                        {/* Optional: Add price if available */}
+                        {offer.prixBase && (
+                          <div className="text-right">
+                            <div className="text-sm text-neutral-500 font-light">À partir de</div>
+                            <div className="text-2xl font-light text-neutral-800">{offer.prixBase}</div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
       </div>
     </section>
   )
