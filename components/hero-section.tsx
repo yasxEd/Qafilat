@@ -148,24 +148,7 @@ export default function HeroSection() {
 			{/* Content */}
 			<div className="relative z-10 min-h-screen flex items-center">
 				<div className="w-full max-w-[95%] mx-auto px-4 mt-16">
-					<div className="flex flex-col lg:flex-row items-center justify-between">
-						
-						{/* Brand Section */}
-						<div className="lg:col-span-5">
-							<div className={`${isVisible ? "animate-fade-in" : "opacity-0"}`}>
-								<div className="mb-12">
-									<h1 className="text-5xl lg:text-7xl font-thin tracking-[0.2em] text-white mb-6 leading-none">
-										QAFILAT
-									</h1>
-									<div className="w-24 h-px bg-gradient-to-r from-transparent via-amber-400 to-transparent mb-6"></div>
-									<h2 className="text-2xl lg:text-3xl font-light tracking-[0.3em] text-amber-400 mb-8">
-										TAYBA
-									</h2>
-								</div>
-							
-							</div>
-						</div>
-
+					<div className="flex flex-col lg:flex-row items-center justify-center">
 						{/* Offer */}
 						<div className="w-full lg:w-2/3">
 							<div className={`${isVisible ? "animate-slide-in" : "opacity-0"}`} style={{ animationDelay: "0.8s" }}>
